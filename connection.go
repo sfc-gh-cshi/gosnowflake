@@ -64,17 +64,19 @@ func (sc *snowflakeConn) exec(
 	query string,
 	noResult bool,
 	isInternal bool,
+	describeOnly bool,
 	bindings []driver.NamedValue) (
 	*execResponse, error) {
 	var err error
 	counter := atomic.AddUint64(&sc.SequenceCounter, 1) // query sequence counter
 
 	req := execRequest{
-		SQLText:    query,
-		AsyncExec:  noResult,
-		SequenceID: counter,
+		SQLText:      query,
+		AsyncExec:    noResult,
+		SequenceID:   counter,
+		IsInternal:   isInternal,
+		DescribeOnly: describeOnly,
 	}
-	req.IsInternal = isInternal
 	tsmode := "TIMESTAMP_NTZ"
 	idx := 1
 	if len(bindings) > 0 {
@@ -185,7 +187,7 @@ func (sc *snowflakeConn) BeginTx(ctx context.Context, opts driver.TxOptions) (dr
 	if sc.rest == nil {
 		return nil, driver.ErrBadConn
 	}
-	_, err := sc.exec(ctx, "BEGIN", false, false, nil)
+	_, err := sc.exec(ctx, "BEGIN", false, false, false, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -215,15 +217,16 @@ func (sc *snowflakeConn) PrepareContext(ctx context.Context, query string) (driv
 	if sc.rest == nil {
 		return nil, driver.ErrBadConn
 	}
+	// sends prepare query to server
+	_, err := sc.exec(ctx, query, false, false, true, []driver.NamedValue{})
+	if err != nil {
+		return nil, err
+	}
 	stmt := &snowflakeStmt{
 		sc:    sc,
 		query: query,
 	}
 	return stmt, nil
-}
-
-func (sc *snowflakeConn) Prepare(query string) (driver.Stmt, error) {
-	return sc.PrepareContext(context.TODO(), query)
 }
 
 func (sc *snowflakeConn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
@@ -232,7 +235,7 @@ func (sc *snowflakeConn) ExecContext(ctx context.Context, query string, args []d
 		return nil, driver.ErrBadConn
 	}
 	// TODO: handle noResult and isInternal
-	data, err := sc.exec(ctx, query, false, false, args)
+	data, err := sc.exec(ctx, query, false, false, false, args)
 	if err != nil {
 		glog.V(2).Infof("error: %v", err)
 		if data != nil {
@@ -319,7 +322,7 @@ func (sc *snowflakeConn) QueryContext(ctx context.Context, query string, args []
 		return nil, driver.ErrBadConn
 	}
 	// TODO: handle noResult and isInternal
-	data, err := sc.exec(ctx, query, false, false, args)
+	data, err := sc.exec(ctx, query, false, false, false, args)
 	if err != nil {
 		glog.V(2).Infof("error: %v", err)
 		if data != nil {
@@ -399,6 +402,10 @@ func (sc *snowflakeConn) QueryContext(ctx context.Context, query string, args []
 	return rows, err
 }
 
+func (sc *snowflakeConn) Prepare(query string) (driver.Stmt, error) {
+	return sc.PrepareContext(context.TODO(), query)
+}
+
 func (sc *snowflakeConn) Exec(
 	query string,
 	args []driver.Value) (
@@ -419,7 +426,7 @@ func (sc *snowflakeConn) Ping(ctx context.Context) error {
 		return driver.ErrBadConn
 	}
 	// TODO: handle noResult and isInternal
-	_, err := sc.exec(ctx, "SELECT 1", false, false, []driver.NamedValue{})
+	_, err := sc.exec(ctx, "SELECT 1", false, false, false, []driver.NamedValue{})
 	return err
 }
 

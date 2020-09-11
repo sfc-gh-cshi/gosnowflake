@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 Snowflake Computing Inc. All right reserved.
+// Copyright (c) 2017-2020 Snowflake Computing Inc. All right reserved.
 
 package gosnowflake
 
@@ -15,7 +15,7 @@ func (tx *snowflakeTx) Commit() (err error) {
 	if tx.sc == nil || tx.sc.rest == nil {
 		return driver.ErrBadConn
 	}
-	_, err = tx.sc.exec(context.TODO(), "COMMIT", false, false, nil)
+	_, err = tx.sc.exec(context.TODO(), "COMMIT", false, false, false, nil)
 	if err != nil {
 		return
 	}
@@ -27,7 +27,7 @@ func (tx *snowflakeTx) Rollback() (err error) {
 	if tx.sc == nil || tx.sc.rest == nil {
 		return driver.ErrBadConn
 	}
-	_, err = tx.sc.exec(context.TODO(), "ROLLBACK", false, false, nil)
+	_, err = tx.sc.exec(context.TODO(), "ROLLBACK", false, false, false, nil)
 	if err != nil {
 		return
 	}

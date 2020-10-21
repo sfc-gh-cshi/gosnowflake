@@ -15,16 +15,22 @@ type SnowflakeDriver struct{}
 // Open creates a new connection.
 func (d SnowflakeDriver) Open(dsn string) (driver.Conn, error) {
 	glog.V(2).Info("Open")
+	ctx := context.TODO()
+	cfg, err := ParseDSN(dsn)
+	if err != nil {
+		return nil, err
+	}
+	return d.OpenWithConfig(ctx, *cfg)
+}
+
+// OpenWithConfig creates a new connection with the specific config.
+func (d SnowflakeDriver) OpenWithConfig(ctx context.Context, config Config) (driver.Conn, error) {
+	glog.V(2).Info("OpenWithConfig")
 	var err error
 	sc := &snowflakeConn{
 		SequenceCounter: 0,
 	}
-	ctx := context.TODO()
-	sc.cfg, err = ParseDSN(dsn)
-	if err != nil {
-		sc.cleanup()
-		return nil, err
-	}
+	sc.cfg = &config
 	st := SnowflakeTransport
 	if sc.cfg.InsecureMode {
 		// no revocation check with OCSP. Think twice when you want to enable this option.

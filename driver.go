@@ -23,7 +23,7 @@ func (d SnowflakeDriver) Open(dsn string) (driver.Conn, error) {
 	return d.OpenWithConfig(ctx, *cfg)
 }
 
-// OpenWithConfig creates a new connection with the specific config.
+// OpenWithConfig creates a new connection with the given config.
 func (d SnowflakeDriver) OpenWithConfig(ctx context.Context, config Config) (driver.Conn, error) {
 	glog.V(2).Info("OpenWithConfig")
 	var err error

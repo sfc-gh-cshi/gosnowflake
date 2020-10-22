@@ -20,8 +20,8 @@ type SnowflakeConnector struct {
 }
 
 // NewSnowflakeConnector creates a new connector with the given SnowflakeDriver and Config.
-func NewSnowflakeConnector(driver *SnowflakeDriverInterface, config *Config) SnowflakeConnector {
-	return SnowflakeConnector{*driver, *config}
+func NewSnowflakeConnector(driver SnowflakeDriverInterface, config Config) SnowflakeConnector {
+	return SnowflakeConnector{driver, config}
 }
 
 // Connect creates a new connection.

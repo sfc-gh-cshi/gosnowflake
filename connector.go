@@ -10,12 +10,12 @@ import (
 // SnowflakeConnector creates SnowflakeDriver with the specified Config
 type SnowflakeConnector struct {
 	driver SnowflakeDriverInterface
-	cfg Config
+	cfg    Config
 }
 
 // NewSnowflakeConnector creates a new connector with the given SnowflakeDriver and Config.
 func NewSnowflakeConnector(driver *SnowflakeDriverInterface, config *Config) SnowflakeConnector {
-	return SnowflakeConnector{*driver, *config }
+	return SnowflakeConnector{*driver, *config}
 }
 
 // Connect creates a new connection.

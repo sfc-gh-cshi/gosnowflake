@@ -12,7 +12,7 @@ import (
 type snowflakeMockDriver struct {
 	SnowflakeDriver
 	config Config
-	conn *snowflakeConn
+	conn   *snowflakeConn
 }
 
 func (d snowflakeMockDriver) Open(_ string) (driver.Conn, error) {
@@ -40,7 +40,7 @@ func TestSnowflakeConnector(t *testing.T) {
 	}
 	fillMissingConfigParameters(config)
 	if reflect.DeepEqual(config, mock.config) {
-		t.Fatalf("Config should be equal, expected %v, actual %v", config,mock.config)
+		t.Fatalf("Config should be equal, expected %v, actual %v", config, mock.config)
 	}
 	if connector.Driver() == nil {
 		t.Fatalf("Missing driver")

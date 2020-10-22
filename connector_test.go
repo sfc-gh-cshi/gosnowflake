@@ -29,7 +29,9 @@ func TestSnowflakeConnector(t *testing.T) {
 	mock := snowflakeMockDriver{conn: &conn}
 	createDSN("UTC")
 	config, err := ParseDSN(dsn)
-
+	if err != nil {
+		t.Fatalf("Failed to parse dsn %s", dsn)
+	}
 	connector := SnowflakeConnector{driver: mock, cfg: *config}
 	connection, err := connector.Connect(context.Background())
 	if err != nil {

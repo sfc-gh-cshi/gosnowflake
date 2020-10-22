@@ -7,6 +7,12 @@ import (
 	"database/sql/driver"
 )
 
+// SnowflakeDriverInterface is the interface for a Snowflake driver
+type SnowflakeDriverInterface interface {
+	Open(dsn string) (driver.Conn, error)
+	OpenWithConfig(ctx context.Context, config Config) (driver.Conn, error)
+}
+
 // SnowflakeConnector creates SnowflakeDriver with the specified Config
 type SnowflakeConnector struct {
 	driver SnowflakeDriverInterface

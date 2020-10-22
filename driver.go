@@ -12,11 +12,6 @@ import (
 // SnowflakeDriver is a context of Go Driver
 type SnowflakeDriver struct{}
 
-type SnowflakeDriverInterface interface {
-	Open(dsn string) (driver.Conn, error)
-	OpenWithConfig(ctx context.Context, config Config) (driver.Conn, error)
-}
-
 // Open creates a new connection.
 func (d SnowflakeDriver) Open(dsn string) (driver.Conn, error) {
 	glog.V(2).Info("Open")

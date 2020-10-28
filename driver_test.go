@@ -2389,7 +2389,7 @@ func TestPingInvalidHost(t *testing.T) {
 }
 
 func TestOpenWithConfig(t *testing.T) {
-	dsn = fmt.Sprintf("%s:%s@%s/%s/%s", user, pass, host, dbname, schemaname)
+	createDSNWithClientSessionKeepAlive()
 	config := Config{}
 	err := parseDSNParams(&config, dsn)
 	if err != nil {

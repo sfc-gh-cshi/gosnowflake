@@ -23,7 +23,7 @@ func (d noopTestDriver) OpenWithConfig(_ context.Context, config Config) (driver
 	return d.conn, nil
 }
 
-func TestSnowflakeConnector(t *testing.T) {
+func TestConnector(t *testing.T) {
 	conn := snowflakeConn{}
 	mock := noopTestDriver{conn: &conn}
 	createDSN("UTC")

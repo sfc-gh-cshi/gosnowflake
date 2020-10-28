@@ -9,30 +9,29 @@ import (
 	"testing"
 )
 
-type snowflakeMockDriver struct {
-	SnowflakeDriver
+type noopTestDriver struct {
 	config Config
 	conn   *snowflakeConn
 }
 
-func (d snowflakeMockDriver) Open(_ string) (driver.Conn, error) {
+func (d noopTestDriver) Open(_ string) (driver.Conn, error) {
 	return nil, nil
 }
 
-func (d snowflakeMockDriver) OpenWithConfig(_ context.Context, config Config) (driver.Conn, error) {
+func (d noopTestDriver) OpenWithConfig(_ context.Context, config Config) (driver.Conn, error) {
 	d.config = config
 	return d.conn, nil
 }
 
 func TestSnowflakeConnector(t *testing.T) {
 	conn := snowflakeConn{}
-	mock := snowflakeMockDriver{conn: &conn}
+	mock := noopTestDriver{conn: &conn}
 	createDSN("UTC")
 	config, err := ParseDSN(dsn)
 	if err != nil {
 		t.Fatalf("Failed to parse dsn %s", dsn)
 	}
-	connector := NewSnowflakeConnector(mock, *config)
+	connector := NewConnector(mock, *config)
 	connection, err := connector.Connect(context.Background())
 	if err != nil {
 		t.Fatalf("Connect error %s", err)

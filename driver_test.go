@@ -2388,6 +2388,27 @@ func TestPingInvalidHost(t *testing.T) {
 	}
 }
 
+func TestOpenWithConfig(t *testing.T) {
+	config := Config{
+		Account:      account,
+		User:         user,
+		Password:     pass,
+		Host: host,
+		Database: dbname,
+		Schema: schemaname,
+	}
+	err := fillMissingConfigParameters(&config)
+	if err != nil {
+		t.Fatalf("failed to fill missing config parameters. config: %v, err: %v", config, err)
+	}
+	driver := SnowflakeDriver{}
+	db, err := driver.OpenWithConfig(context.Background(), config)
+	if err != nil {
+		t.Fatalf("failed to open with config. config: %v, err: %v", config, err)
+	}
+	db.Close()
+}
+
 func createDSNWithClientSessionKeepAlive() {
 	dsn = fmt.Sprintf("%s:%s@%s/%s/%s", user, pass, host, dbname, schemaname)
 

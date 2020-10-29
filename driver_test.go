@@ -2389,7 +2389,6 @@ func TestPingInvalidHost(t *testing.T) {
 }
 
 func TestOpenWithConfig(t *testing.T) {
-	createDSNWithClientSessionKeepAlive()
 	config, err := ParseDSN(dsn)
 	if err != nil {
 		t.Fatalf("failed to parse dsn. dsn: %v, err: %v", dsn, err)

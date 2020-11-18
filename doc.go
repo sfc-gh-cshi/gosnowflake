@@ -197,7 +197,7 @@ application and driver logs at the same time.
 
 Query request ID
 
-Specific query request ID can be set in the context and will be passed through
+A specific query request ID can be set in the context and will be passed through
 in place of the default randomized request ID. For example:
 
 	ctxWithID := WithRequestID(ctx, "app-request-id-...")
